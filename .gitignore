@@ -1,0 +1,10 @@
+.env
+/.ssh/**
+!/.ssh/.gitkeep
+/redis/data/**
+!/redis/data/.gitkeep
+
+.idea/
+.DS_Store
+
+*.log

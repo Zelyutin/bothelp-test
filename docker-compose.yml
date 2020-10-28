@@ -1,0 +1,38 @@
+version: '3'
+
+networks:
+  backend:
+
+services:
+
+  redis:
+    image: redis:latest
+    ports:
+      - "${REDIS_PORT}:6379"
+    container_name: redis
+    volumes:
+      - ./redis/data:/var/lib/redis
+      - ./redis/conf:/usr/local/etc/redis/redis.conf
+    environment:
+      TZ: ${WORKSPACE_TIMEZONE}
+    networks:
+      - backend
+
+  php-7.3:
+    build:
+      context: ./php-workspace
+      dockerfile: Dockerfile
+      args:
+        DOCKER_PHP_VERSION: '7.3'
+        DOCKER_PHP_ENABLE_XDEBUG: ${DOCKER_PHP_ENABLE_XDEBUG}
+        TZ: ${WORKSPACE_TIMEZONE}
+    working_dir: /
+    container_name: php-7.3
+    volumes:
+      - ./projects:/var/www
+      - ./php-ini/7.3/php.ini:/usr/local/etc/php/php.ini
+      - ./php-workers/7.3/supervisor.d:/etc/supervisor.d
+    ports:
+      - "${PHP_7_3_PORT}:9000"
+    networks:
+      - backend
